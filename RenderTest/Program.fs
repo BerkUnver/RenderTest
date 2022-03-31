@@ -23,7 +23,9 @@ module Program =
                 for x in 0 .. (width - 1) do
                     for y in 0 .. (height - 1) do
                         let pt = Vec2.make (float32 x) (float32 y)
-                        arr.[y, x] <- Draw.testPipeline pt pixels.[y, x]
+                        arr.[y, x] <-
+                            Draw.testPipeline pt pixels.[y, x]
+                            |> RGB.int32
                 arr
             use arrayPtr = fixed &intPixels[0, 0]
             new Bitmap (width, height, stride, PixelFormat.Format32bppRgb, NativePtr.toNativeInt arrayPtr)

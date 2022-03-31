@@ -1,5 +1,8 @@
 ﻿namespace RenderTest.Vec
 
+open System.Drawing
+open Microsoft.FSharp.Core
+
 type RGB = byte Vec3
 
 module RGB =
@@ -17,8 +20,18 @@ module RGB =
     let inline r rgb = rgb.X
     let inline g rgb = rgb.Y
     let inline b rgb = rgb.Z
-    let inline int32 rgb =
+    
+    let int32 (rgb : RGB) =
         let r = r rgb |> int <<< 16
         let g = g rgb |> int <<< 8
         let b = b rgb |> int
         r ||| g ||| b
+        
+    let fromInt32 (i : int) =
+        let r = i <<< 16 |> byte
+        let g = i <<< 8 |> byte
+        let b = byte i
+        make r g b
+        
+    let fromColor (color : Color) =
+        make color.R color.G color.B

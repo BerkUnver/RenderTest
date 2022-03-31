@@ -9,14 +9,23 @@
         <Compile Include="Vec\Vec2.fs" />
         <Compile Include="Vec\Vec3.fs" />
         <Compile Include="Vec\RGB.fs" />
-        <Compile Include="Block.fs" />
+        <Compile Include="Vec\Transform.fs" />
+        <Compile Include="Block2D.fs" />
+        <Compile Include="Bitmap.fs" />
         <Compile Include="Draw.fs" />
         <Compile Include="Program.fs" />
+        <Content Include="Griffin.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
     
     <ItemGroup>
         <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
-        <PackageReference Include="System.Windows.Forms" Version="4.0.0"/>
+        <PackageReference Include="System.Windows.Forms" Version="4.0.0" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="bin\Debug\net472" />
     </ItemGroup>
 
 </Project>
