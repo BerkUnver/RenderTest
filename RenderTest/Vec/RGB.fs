@@ -6,20 +6,14 @@ open Microsoft.FSharp.Core
 type RGB = byte Vec3
 
 module RGB =
-    let inline make r g b = {
-        X = r
-        Y = g
-        Z = b
-    }
-    let b255 = byte 255
-    let b0 = byte 0
-    let red = make b255 b0 b0
-    let green = make b0 b255 b0
-    let blue = make b0 b0 b255
-    let black = make b0 b0 b0
-    let inline r rgb = rgb.X
-    let inline g rgb = rgb.Y
-    let inline b rgb = rgb.Z
+    
+    let red = Vec3.make 255uy 0uy 0uy
+    let green = Vec3.make 0uy 255uy 0uy
+    let blue = Vec3.make 0uy 0uy 255uy
+    let black = Vec3.make 0uy 0uy 0uy
+    let inline r (rgb : RGB) = rgb.X
+    let inline g (rgb : RGB) = rgb.Y
+    let inline b (rgb : RGB) = rgb.Z
     
     let int32 (rgb : RGB) =
         let r = r rgb |> int <<< 16
@@ -31,7 +25,7 @@ module RGB =
         let r = i <<< 16 |> byte
         let g = i <<< 8 |> byte
         let b = byte i
-        make r g b
+        Vec3.make r g b
         
     let fromColor (color : Color) =
-        make color.R color.G color.B
+        Vec3.make color.R color.G color.B

@@ -6,13 +6,17 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Include="Math.fs" />
         <Compile Include="Vec\Vec2.fs" />
         <Compile Include="Vec\Vec3.fs" />
+        <Compile Include="Vec\Vec4.fs" />
         <Compile Include="Vec\RGB.fs" />
         <Compile Include="Vec\Transform.fs" />
+        <Compile Include="Vec\RGBA.fs" />
         <Compile Include="Block2D.fs" />
-        <Compile Include="Bitmap.fs" />
+        <Compile Include="Image.fs" />
         <Compile Include="Draw.fs" />
+        <Compile Include="Draw2.fs" />
         <Compile Include="Program.fs" />
         <Content Include="Griffin.png">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>

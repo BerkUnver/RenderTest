@@ -3,14 +3,29 @@ namespace RenderTest
 
 open RenderTest.Vec
 
-type 'T Block2D = private Block2D of 'T[,]
-
+type 'T Block2D =
+    private
+    | Block2D of 'T[,]
+    
 module Block2D =
     let wrapUnsafe a = Block2D a
     let inline private unwrap b = match b with Block2D a -> a
-    let at (p : int Vec2) (b : 'T Block2D) = (unwrap b).[p.Y, p.X]
     let xSize (b : 'T Block2D) = (unwrap b).GetLength 1
     let ySize (b : 'T Block2D) = (unwrap b).GetLength 0
+    let at (p : int Vec2) (b : 'T Block2D) = (unwrap b).[p.Y, p.X]
+    
+    let atSafe (pos : int Vec2) block =
+        if
+            pos.X < 0
+            || pos.X >= xSize block
+            || pos.Y < 0
+            || pos.Y >= ySize block
+        then ValueNone
+        else
+            block
+            |> at pos
+            |> ValueSome
+            
     let size b = Vec2.make (xSize b) (ySize b)
     
     let map (func : 'T -> 'O) block =

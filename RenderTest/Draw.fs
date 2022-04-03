@@ -1,6 +1,5 @@
 ﻿namespace RenderTest
 
-open System
 open RenderTest
 open RenderTest.Vec
 
@@ -12,16 +11,18 @@ module Draw =
         fun pos rgb ->
             draw1 pos rgb
             |> draw2 pos
-            
-    let rect color (size: single Vec2) =
+    
+    let solid rgb = fun _ _ -> rgb
+    
+    let bound (size : single Vec2) draw =
         fun (pos : single Vec2) bkg ->
-            if
-                (pos.X >= 0f)
-                && (pos.X <= size.X)
-                && (pos.Y >= 0f)
-                && (pos.Y <= size.Y)
-            then color
-            else bkg
+            if pos.X < 0f || pos.X > size.X || pos.Y < 0f || pos.Y > size.Y
+            then bkg
+            else draw pos bkg
+            
+    let rect rgb (size: single Vec2) =
+        solid rgb
+        |> bound size
             
     let move transform (func : Draw) : Draw =
         fun pos -> func (pos - transform)
@@ -37,23 +38,38 @@ module Draw =
             }
             func newPos
     
-    let pixel (block : RGB Block2D) =
-        fun (pos : single Vec2) (bkg : RGB) ->
-            let xSize = Block2D.xSize block
-            let ySize = Block2D.ySize block
+
+    
+    // apply alpha effect
+    let block (block : RGBA Block2D) =
+        fun pos rgb ->
+            block
+            |> Image.pixelSingle pos 
+            |> RGBA.composite rgb
             
-            let posInt = Vec2.map int pos
-            let exceedX = posInt.X < 0 || posInt.X >= xSize
-            let exceedY = posInt.Y < 0 || posInt.Y >= ySize
-            
-            if exceedX || exceedY
-            then bkg
-            else
-                let coords = Vec2.map int pos
-                Block2D.at coords block
+    let invertBlock (block : RGBA Block2D) =
+        fun pos rgb ->
+            block
+            |> Image.pixelSingle pos
+            |> RGBA.invert
+            |> RGBA.composite rgb
             
     let testPipeline =
-        pixel (Bitmap.load "Griffin.png").Value
-        |> scale (Vec2.make 2f 2f)
+        let drawImg = block Image.Griffin
+        let drawImgInv = invertBlock Image.Griffin
+        
+        let big = 
+            drawImgInv
+            |> scale (Vec2.same 2f)
+            
+        let small =
+            drawImg
+            |> scale (Vec2.same 0.5f)
+            
+        let rect =
+            Vec2.same 100f
+            |> rect RGB.red
+            
+        rect ==> small ==> big
         // |> move (Vec2.make 100f 0f)
         // |> rotate (single Math.PI / 4f)

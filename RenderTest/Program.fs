@@ -35,7 +35,7 @@ module Program =
         picBox.Dock <- DockStyle.Fill
         
         use form = new Form ()
-        form.Size <- Size (480, 270)
+        form.Size <- Size (width, height)
         form.Controls.Add picBox
         Application.Run form
         0

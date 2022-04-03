@@ -19,7 +19,9 @@ type 'T Vec2 =
     static member inline (*) (a, b) = Vec2<_>.Map2 (*) a b
     static member inline (/) (a, b) = Vec2<_>.Map2 (/) a b
 
+type SVec2 = single Vec2
 module Vec2 =
     let inline map<'T, 'O> = Vec2.Map<'T, 'O>
     let inline make x y = {X = x; Y = y;}
+    let inline same x = make x x
     let zeroF = make 0f 0f
