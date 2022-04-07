@@ -26,3 +26,4 @@ module RGBA =
 
     let inline invert (c : RGBA) =
         Vec4.make (255uy - c.R) (255uy - c.G) (255uy - c.B) c.A
+        

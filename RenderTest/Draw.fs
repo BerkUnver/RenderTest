@@ -3,31 +3,23 @@
 open RenderTest
 open RenderTest.Vec
 
-type Draw = single Vec2 -> RGB -> RGB
+type Draw = SVec2 -> RGB -> RGB
+type SolidDraw = SVec2 -> RGB ValueOption
+type AlphaDraw = SVec2 -> RGBA
 
 module Draw =
-    /// draw this then that
-    let (==>) draw1 draw2 =
-        fun pos rgb ->
-            draw1 pos rgb
-            |> draw2 pos
-    
     let solid rgb = fun _ _ -> rgb
-    
-    let bound (size : single Vec2) draw =
-        fun (pos : single Vec2) bkg ->
-            if pos.X < 0f || pos.X > size.X || pos.Y < 0f || pos.Y > size.Y
-            then bkg
-            else draw pos bkg
             
-    let rect rgb (size: single Vec2) =
-        solid rgb
-        |> bound size
+    let rect size color =
+        fun pos ->
+            if Vec2.contains size pos
+            then ValueSome color
+            else ValueNone
             
-    let move transform (func : Draw) : Draw =
+    let move transform (func : SVec2 -> 'T) =
         fun pos -> func (pos - transform)
     
-    let scale scaleAmount (func : Draw) : Draw =
+    let scale scaleAmount (func : SVec2 -> 'T)  =
         fun pos -> func (pos / scaleAmount)
     
     let rotate theta (func : Draw) : Draw =
@@ -39,7 +31,6 @@ module Draw =
             func newPos
     
 
-    
     // apply alpha effect
     let block (block : RGBA Block2D) =
         fun pos rgb ->
@@ -54,22 +45,34 @@ module Draw =
             |> RGBA.invert
             |> RGBA.composite rgb
             
-    let testPipeline =
-        let drawImg = block Image.Griffin
-        let drawImgInv = invertBlock Image.Griffin
+            
+    let startDrawA (draw : AlphaDraw) : Draw =
+        fun pos bkg  ->
+            let color = draw pos
+            match color.A with
+            | 255uy -> RGBA.rgb color
+            | 0uy -> bkg
+            | _ -> RGBA.composite bkg color
+    
+    let thenDrawA (drawOver : AlphaDraw) (drawUnder : Draw) : Draw =
+        fun pos bkg ->
+            let color = drawOver pos
+            match color.A with
+            | 255uy -> RGBA.rgb color
+            | 0uy -> drawUnder pos bkg
+            | _ -> RGBA.composite (drawUnder pos bkg) color
         
-        let big = 
-            drawImgInv
-            |> scale (Vec2.same 2f)
+    let thenDrawS (draw2 : SolidDraw) (draw1 : Draw) : Draw =
+        fun pos bkg ->
+            match draw2 pos with
+            | ValueNone -> draw1 pos bkg
+            | ValueSome rgb -> rgb
             
-        let small =
-            drawImg
-            |> scale (Vec2.same 0.5f)
-            
+    let testPipeline =
+        let griffin pos = Image.pixelSingle pos Image.Griffin
         let rect =
-            Vec2.same 100f
-            |> rect RGB.red
+            let size = Vec2.make 100f 100f
+            rect size RGB.red
             
-        rect ==> small ==> big
-        // |> move (Vec2.make 100f 0f)
-        // |> rotate (single Math.PI / 4f)
+        startDrawA griffin
+        |> thenDrawS rect
