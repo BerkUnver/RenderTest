@@ -16,7 +16,6 @@ module Program =
 
     [<EntryPoint>]
     let main _ =
-        let pixels = Array2D.create height width RGB.black
         let bitmap =
             let intPixels =
                 let arr = Array2D.zeroCreate height width
@@ -24,7 +23,8 @@ module Program =
                     for y in 0 .. (height - 1) do
                         let pt = Vec2.make (float32 x) (float32 y)
                         arr.[y, x] <-
-                            Draw.testPipeline pt pixels.[y, x]
+                            Model.testView pt
+                            |> RGBA.composite RGB.black
                             |> RGB.int32
                 arr
             use arrayPtr = fixed &intPixels[0, 0]

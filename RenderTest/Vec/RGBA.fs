@@ -21,6 +21,9 @@ module RGBA =
         let b = Math.qLerp rgb.B rgba.B rgba.A
         Vec3.make r g b
         
+    let blend (rgba1 : RGBA) (rgba2 : RGBA) : RGBA = rgba1 // todo : Fix lol
+        
+        
     let fromColor (c : Color) =
         Vec4.make c.R c.G c.B c.A
 

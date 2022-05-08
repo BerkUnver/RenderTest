@@ -16,6 +16,7 @@
         <Compile Include="Block2D.fs" />
         <Compile Include="Image.fs" />
         <Compile Include="Draw.fs" />
+        <Compile Include="Model.fs" />
         <Compile Include="Program.fs" />
         <Content Include="Griffin.png">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
